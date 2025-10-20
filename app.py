@@ -14,11 +14,10 @@ class GoogleSheetsCSV:
     """Handle Google Sheets data retrieval via CSV export"""
     
     def __init__(self):
-        # Google Sheets CSV export URLs from Streamlit secrets with fallback
-        try:
-            self.sales_data_url = st.secrets["sales_data_url"]
-            self.users_data_url = st.secrets["users_data_url"]
-        
+        # Google Sheets CSV export URLs from Streamlit secrets
+        self.sales_data_url = st.secrets["sales_data_url"]
+        self.users_data_url = st.secrets["users_data_url"]
+    
     def get_sales_data(self) -> Optional[pd.DataFrame]:
         """Get sales data from Google Sheets CSV"""
         try:
