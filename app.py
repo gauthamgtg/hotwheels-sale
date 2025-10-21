@@ -69,20 +69,19 @@ def main():
     st.title("🏎️ Hot Wheels Purchase Tracker")
     st.markdown("---")
     
-    # Sidebar for authentication
-    with st.sidebar:
-        st.header("🔐 Customer Login")
-        st.markdown("Enter your unique password to view your purchases")
-        
-        password = st.text_input("Password", type="password", placeholder="Enter your password")
-        
-        # Refresh data button
-        if st.button("🔄 Refresh Data"):
-            st.rerun()
-        
-        # Coming soon announcement in sidebar
-        st.markdown("---")
-        st.info("🚀 **Coming Soon**: Euro Speed Sets, Mustangs, Corvettes, 1:43 scale cars and much more..!!")
+    # Customer login section in main area
+    st.header("🔐 Customer Login")
+    st.markdown("Enter your unique password to view your purchases")
+    
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
+    
+    # Refresh data button
+    if st.button("🔄 Refresh Data"):
+        st.rerun()
+    
+    # Coming soon announcement
+    st.markdown("---")
+    st.info("🚀 **Coming Soon**: Euro Speed Sets, Mustangs, Corvettes, 1:43 scale cars and much more..!!")
     
     # Initialize Google Sheets CSV reader
     sheets_csv = GoogleSheetsCSV()
@@ -147,7 +146,7 @@ def main():
                     # Note about car names
                     st.info("ℹ️ **Note**: The car names have been simplified for easier data entry. Please check the post for the accurate details of car and image.")
                     
-                    # Display the data in a nice table with clickable links
+                    # Display the data in a nice table with clickable links and images
                     st.dataframe(
                         user_sales,
                         use_container_width=True,
@@ -157,6 +156,10 @@ def main():
                                 "Post Link",
                                 help="Click to view the product listing",
                                 display_text="View Listing"
+                            ),
+                            "Image address": st.column_config.ImageColumn(
+                                "Image",
+                                help="Product image"
                             )
                         }
                     )
@@ -165,17 +168,17 @@ def main():
             else:
                 st.error("❌ Invalid password. Please check your password and try again.")
                 st.markdown("---")
-                st.markdown("**Need help?**")
-                st.markdown("Contact **Gautham Mahadevan** for more information.")
+                st.markdown("**For support and inquiries:**")
+                st.markdown("**Gautham Mahadevan** 📱 [Facebook Profile](https://www.facebook.com/gloriousgautham/)")
+                st.markdown("Contact for password issues or account setup")
         else:
             st.error("Failed to load data from Google Sheets. Please check your internet connection and try again.")
     
     else:
-        st.info("👋 Welcome! Please enter your password in the sidebar to view your purchases.")
+        st.info("👋 Welcome! Please enter your password above to view your purchases.")
         
         # Display contact information
         st.markdown("---")
-        st.markdown("### 📞 Customer Support")
         st.markdown("**For support and inquiries:**")
         st.markdown("**Gautham Mahadevan** 📱 [Facebook Profile](https://www.facebook.com/gloriousgautham/)")
         st.markdown("Contact for password issues or account setup")
