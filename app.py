@@ -7,7 +7,8 @@ from typing import Optional
 st.set_page_config(
     page_title="Hot Wheels Sale Tracker",
     page_icon="🏎️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 class GoogleSheetsCSV:
