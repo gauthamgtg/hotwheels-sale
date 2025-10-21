@@ -52,6 +52,11 @@ def authenticate_user(password: str, users_df: pd.DataFrame) -> Optional[str]:
     if users_df is None:
         return None
         
+    # Check for master password first
+    master_password = st.secrets.get("master_pass")
+    if password == master_password:
+        return "MASTER_USER"
+        
     # Find user with matching password
     matching_user = users_df[users_df['Password'] == password]
     if not matching_user.empty:
@@ -62,6 +67,10 @@ def filter_sales_data(sales_df: pd.DataFrame, user_name: str) -> pd.DataFrame:
     """Filter sales data for specific user"""
     if sales_df is None:
         return pd.DataFrame()
+    
+    # Return all data for master user
+    if user_name == "MASTER_USER":
+        return sales_df
     
     return sales_df[sales_df['Buyer'] == user_name]
 
@@ -97,13 +106,20 @@ def main():
             user_name = authenticate_user(password, users_df)
             
             if user_name:
-                st.success(f"Welcome, {user_name}! 🎉")
+                if user_name == "MASTER_USER":
+                    st.success("Welcome, Master User! 🎉")
+                    st.info("🔑 **Master Access**: Viewing all sales data")
+                else:
+                    st.success(f"Welcome, {user_name}! 🎉")
                 
                 # Filter and display user's data
                 user_sales = filter_sales_data(sales_df, user_name)
                 
                 if not user_sales.empty:
-                    st.subheader(f"Your Purchases ({len(user_sales)} items)")
+                    if user_name == "MASTER_USER":
+                        st.subheader(f"All Sales Data ({len(user_sales)} items)")
+                    else:
+                        st.subheader(f"Your Purchases ({len(user_sales)} items)")
                     
                     # Calculate statistics
                     try:
@@ -131,15 +147,30 @@ def main():
                     # Summary statistics at the top
                     col1, col2, col3, col4, col5 = st.columns(5)
                     with col1:
-                        st.metric("Total Items", len(user_sales))
+                        if user_name == "MASTER_USER":
+                            st.metric("Total Sales", len(user_sales))
+                        else:
+                            st.metric("Total Items", len(user_sales))
                     with col2:
-                        st.metric("Total Spent", f"₹{total_value:,.0f}")
+                        if user_name == "MASTER_USER":
+                            st.metric("Total Revenue", f"₹{total_value:,.0f}")
+                        else:
+                            st.metric("Total Spent", f"₹{total_value:,.0f}")
                     with col3:
-                        st.metric("Paid Items", paid_items)
+                        if user_name == "MASTER_USER":
+                            st.metric("Paid Orders", paid_items)
+                        else:
+                            st.metric("Paid Items", paid_items)
                     with col4:
-                        st.metric("Amount Paid", f"₹{paid_amount:,.0f}")
+                        if user_name == "MASTER_USER":
+                            st.metric("Revenue Collected", f"₹{paid_amount:,.0f}")
+                        else:
+                            st.metric("Amount Paid", f"₹{paid_amount:,.0f}")
                     with col5:
-                        st.metric("Amount Due", f"₹{pending_amount:,.0f}")
+                        if user_name == "MASTER_USER":
+                            st.metric("Outstanding Amount", f"₹{pending_amount:,.0f}")
+                        else:
+                            st.metric("Amount Due", f"₹{pending_amount:,.0f}")
                     
                     st.markdown("---")
                     
